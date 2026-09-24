@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "儿童流感季剂次账领域事件",
+  "type": "object",
+  "required": [
+    "event_id",
+    "event_type",
+    "aggregate_type",
+    "aggregate_id",
+    "occurred_at",
+    "version",
+    "payload"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "POLICY_PUBLISHED",
+        "DOSE_RECORDED",
+        "RECORD_MATCHED",
+        "BATCH_SUSPENDED",
+        "PROOF_ISSUED"
+      ]
+    },
+    "aggregate_type": {
+      "type": "string",
+      "enum": [
+        "season_policy",
+        "child_record",
+        "dose_event",
+        "batch_notice"
+      ]
+    },
+    "aggregate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "payload_required_by_event": {
+    "DOSE_RECORDED": [
+      "season_id",
+      "lot_no"
+    ],
+    "BATCH_SUSPENDED": [
+      "lot_no",
+      "effective_at"
+    ],
+    "PROOF_ISSUED": [
+      "viewer_role",
+      "record_version"
+    ]
+  },
+  "additionalProperties": false
+}

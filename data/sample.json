@@ -1,0 +1,9 @@
+{
+  "event_id": "092507-002-sample-001",
+  "event_type": "POLICY_PUBLISHED",
+  "aggregate_type": "season_policy",
+  "aggregate_id": "flu_dose_ledger-001",
+  "occurred_at": "2026-09-24T12:00:00+08:00",
+  "version": 1,
+  "payload": {}
+}
