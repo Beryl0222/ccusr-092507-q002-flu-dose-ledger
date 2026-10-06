@@ -2,8 +2,13 @@
   "event_id": "092507-002-sample-001",
   "event_type": "POLICY_PUBLISHED",
   "aggregate_type": "season_policy",
-  "aggregate_id": "flu_dose_ledger-001",
+  "aggregate_id": "2026-2027",
   "occurred_at": "2026-09-24T12:00:00+08:00",
   "version": 1,
-  "payload": {}
+  "payload": {
+    "guideline_version": "CN-FLU-2026",
+    "season_start": "2026-07-01",
+    "season_end": "2027-06-30",
+    "advisory_complete_by": "2026-10-31"
+  }
 }

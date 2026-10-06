@@ -19,9 +19,14 @@
     "event_type": {
       "type": "string",
       "enum": [
+        "CHILD_REGISTERED",
         "POLICY_PUBLISHED",
+        "CONSENT_RECORDED",
+        "DEFERRAL_RECORDED",
         "DOSE_RECORDED",
         "RECORD_MATCHED",
+        "DOSE_RECONCILED",
+        "PLAN_CREATED",
         "BATCH_SUSPENDED",
         "PROOF_ISSUED"
       ]
@@ -32,6 +37,7 @@
         "season_policy",
         "child_record",
         "dose_event",
+        "dose_plan",
         "batch_notice"
       ]
     },
@@ -52,9 +58,48 @@
     }
   },
   "payload_required_by_event": {
-    "DOSE_RECORDED": [
+    "CHILD_REGISTERED": [
+      "birth_date",
+      "home_region"
+    ],
+    "POLICY_PUBLISHED": [
+      "guideline_version",
+      "season_start",
+      "season_end",
+      "advisory_complete_by"
+    ],
+    "CONSENT_RECORDED": [
+      "scope",
+      "granted"
+    ],
+    "DEFERRAL_RECORDED": [
       "season_id",
-      "lot_no"
+      "reason_kind"
+    ],
+    "DOSE_RECORDED": [
+      "child_ref",
+      "season_id",
+      "dose_seq",
+      "administered_at",
+      "lot_no",
+      "origin",
+      "executor_id"
+    ],
+    "RECORD_MATCHED": [
+      "external_ref",
+      "source_region",
+      "match_auth_id"
+    ],
+    "DOSE_RECONCILED": [
+      "season_id",
+      "dose_seq",
+      "kept_event_id"
+    ],
+    "PLAN_CREATED": [
+      "child_id",
+      "season_id",
+      "lot_no",
+      "planned_for"
     ],
     "BATCH_SUSPENDED": [
       "lot_no",
