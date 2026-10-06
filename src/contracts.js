@@ -4,6 +4,14 @@ function hasExplicitTimezone(value) {
   return typeof value === "string" && (/Z$/.test(value) || /[+-]\d{2}:\d{2}$/.test(value)) && !Number.isNaN(Date.parse(value));
 }
 
+function isDateOnly(value) {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+}
+
+function getPath(obj, path) {
+  return path.split(".").reduce((cur, key) => (cur !== null && typeof cur === "object" ? cur[key] : undefined), obj);
+}
+
 export function validateEvent(payload, schema) {
   if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
     return [{ field: "$", code: "object_required", message: "事件必须是 JSON 对象" }];
@@ -32,9 +40,42 @@ export function validateEvent(payload, schema) {
   const eventPayload = payload.payload;
   if ("payload" in payload && (eventPayload === null || typeof eventPayload !== "object" || Array.isArray(eventPayload))) {
     issues.push({ field: "payload", code: "object_required", message: "事件载荷必须是 JSON 对象" });
-  } else if (typeof payload.event_type === "string" && eventPayload && typeof eventPayload === "object") {
-    for (const field of schema.payload_required_by_event?.[payload.event_type] ?? []) {
-      if (!(field in eventPayload)) issues.push({ field: `payload.${field}`, code: "required", message: "事件载荷缺少必填字段" });
+  } else if (typeof payload.event_type === "string" && eventPayload && typeof eventPayload === "object" && !Array.isArray(eventPayload)) {
+    const eventType = payload.event_type;
+    for (const path of schema.payload_required_by_event?.[eventType] ?? []) {
+      if (getPath(eventPayload, path) === undefined) {
+        issues.push({ field: `payload.${path}`, code: "required", message: "事件载荷缺少必填字段" });
+      }
+    }
+    for (const [path, allowed] of Object.entries(schema.payload_string_enums_by_event?.[eventType] ?? {})) {
+      const value = getPath(eventPayload, path);
+      if (value !== undefined && (typeof value !== "string" || !allowed.includes(value))) {
+        issues.push({ field: `payload.${path}`, code: "unsupported_value", message: "载荷字段值未在契约中登记" });
+      }
+    }
+    for (const path of schema.payload_datetime_fields_by_event?.[eventType] ?? []) {
+      const value = getPath(eventPayload, path);
+      if (value !== undefined && value !== null && !hasExplicitTimezone(value)) {
+        issues.push({ field: `payload.${path}`, code: "timezone_required", message: "载荷时间必须包含时区" });
+      }
+    }
+    for (const path of schema.payload_date_fields_by_event?.[eventType] ?? []) {
+      const value = getPath(eventPayload, path);
+      if (value !== undefined && !isDateOnly(value)) {
+        issues.push({ field: `payload.${path}`, code: "date_required", message: "载荷日期必须是 YYYY-MM-DD" });
+      }
+    }
+    for (const path of schema.payload_integer_fields_by_event?.[eventType] ?? []) {
+      const value = getPath(eventPayload, path);
+      if (value !== undefined && !Number.isInteger(value)) {
+        issues.push({ field: `payload.${path}`, code: "integer_required", message: "载荷字段必须是整数" });
+      }
+    }
+    for (const path of schema.payload_boolean_fields_by_event?.[eventType] ?? []) {
+      const value = getPath(eventPayload, path);
+      if (value !== undefined && typeof value !== "boolean") {
+        issues.push({ field: `payload.${path}`, code: "boolean_required", message: "载荷字段必须是布尔值" });
+      }
     }
   }
   return issues.sort((left, right) => left.field.localeCompare(right.field) || left.code.localeCompare(right.code));

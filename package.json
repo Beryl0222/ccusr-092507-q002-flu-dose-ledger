@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "build": "node --check src/contracts.js && node --check src/cli.js",
-    "check:sample": "node src/cli.js contracts/domain.schema.json data/sample.json"
+    "build": "node --check src/contracts.js && node --check src/io.js && node --check src/cli.js && node --check src/query.js && node --check src/day-end.js && node --check src/domain/time.js && node --check src/domain/fold.js && node --check src/domain/status.js && node --check src/domain/projections.js",
+    "check:sample": "node src/cli.js contracts/domain.schema.json data/sample.json",
+    "day-end": "node src/day-end.js --schema contracts/domain.schema.json --events data/events.jsonl --season 2026 --as-of 2026-10-31T12:00:00+08:00 --out-dir out/",
+    "query": "node src/query.js --schema contracts/domain.schema.json --events data/events.jsonl"
   }
 }

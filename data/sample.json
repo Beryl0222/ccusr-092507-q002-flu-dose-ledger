@@ -1,9 +1,21 @@
 {
-  "event_id": "092507-002-sample-001",
+  "event_id": "evt-policy-2026-1",
   "event_type": "POLICY_PUBLISHED",
   "aggregate_type": "season_policy",
-  "aggregate_id": "flu_dose_ledger-001",
-  "occurred_at": "2026-09-24T12:00:00+08:00",
+  "aggregate_id": "policy-season-2026",
+  "occurred_at": "2026-06-01T09:00:00+08:00",
   "version": 1,
-  "payload": {}
+  "payload": {
+    "season_id": "2026",
+    "guideline_version": "2026.1",
+    "effective_at": "2026-07-01T00:00:00+08:00",
+    "rules": {
+      "season_start": "2026-07-01",
+      "season_end": "2027-06-30",
+      "age_as_of": "2026-09-01",
+      "recommended_complete_by": "2026-10-31",
+      "onset_days_after_final_dose": 14,
+      "schedule": []
+    }
+  }
 }

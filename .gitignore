@@ -5,3 +5,7 @@ __pycache__/
 .venv/
 node_modules/
 coverage/
+
+# 日终产物（确定性，可随时重放重建）
+out/
+*.tmp-*

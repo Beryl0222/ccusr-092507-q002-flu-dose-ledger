@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "儿童流感季剂次账领域事件",
+  "description": "交换层只稳定报告结构、枚举、时间、版本和必需载荷；同一业务键的幂等、冲突与合并由上层折叠层处理。",
   "type": "object",
   "required": [
     "event_id",
@@ -20,9 +21,16 @@
       "type": "string",
       "enum": [
         "POLICY_PUBLISHED",
+        "CHILD_REGISTERED",
         "DOSE_RECORDED",
+        "DOSE_REPORTS_RECONCILED",
         "RECORD_MATCHED",
         "BATCH_SUSPENDED",
+        "DEFERRAL_RECORDED",
+        "DEFERRAL_CLEARED",
+        "CONSENT_UPDATED",
+        "PLAN_PROPOSED",
+        "PLAN_CANCELLED",
         "PROOF_ISSUED"
       ]
     },
@@ -32,6 +40,7 @@
         "season_policy",
         "child_record",
         "dose_event",
+        "dose_plan",
         "batch_notice"
       ]
     },
@@ -52,17 +61,180 @@
     }
   },
   "payload_required_by_event": {
-    "DOSE_RECORDED": [
+    "POLICY_PUBLISHED": [
       "season_id",
-      "lot_no"
+      "guideline_version",
+      "effective_at",
+      "rules",
+      "rules.season_start",
+      "rules.season_end",
+      "rules.age_as_of",
+      "rules.recommended_complete_by",
+      "rules.onset_days_after_final_dose",
+      "rules.schedule"
+    ],
+    "CHILD_REGISTERED": [
+      "birth_date",
+      "home_region_code"
+    ],
+    "DOSE_RECORDED": [
+      "child_record_id",
+      "season_id",
+      "dose_seq",
+      "vaccine_product",
+      "lot_no",
+      "administered_at",
+      "administered_by",
+      "source_report_id",
+      "region_code"
+    ],
+    "DOSE_REPORTS_RECONCILED": [
+      "business_key",
+      "resolution",
+      "decided_at"
+    ],
+    "RECORD_MATCHED": [
+      "authorization_id",
+      "source_region_code",
+      "source_record_id",
+      "target_record_id",
+      "matched_at"
     ],
     "BATCH_SUSPENDED": [
       "lot_no",
+      "effective_at",
+      "reason_code"
+    ],
+    "DEFERRAL_RECORDED": [
+      "child_record_id",
+      "season_id",
+      "kind",
+      "reason_code",
       "effective_at"
     ],
+    "DEFERRAL_CLEARED": [
+      "child_record_id",
+      "season_id",
+      "deferral_event_id",
+      "cleared_at"
+    ],
+    "CONSENT_UPDATED": [
+      "child_record_id",
+      "scope",
+      "granted",
+      "effective_at"
+    ],
+    "PLAN_PROPOSED": [
+      "child_record_id",
+      "season_id",
+      "dose_seq",
+      "vaccine_product",
+      "lot_no",
+      "scheduled_at",
+      "based_on_policy_version"
+    ],
+    "PLAN_CANCELLED": [
+      "plan_event_id",
+      "reason_code",
+      "cancelled_at"
+    ],
     "PROOF_ISSUED": [
+      "child_record_id",
+      "season_id",
       "viewer_role",
       "record_version"
+    ]
+  },
+  "payload_string_enums_by_event": {
+    "DOSE_RECORDED": {
+      "dose_seq": [
+        "1",
+        "2"
+      ]
+    },
+    "DOSE_RECORDED_reconciliation_resolution_note": "见 DOSE_REPORTS_RECONCILED.resolution",
+    "DOSE_REPORTS_RECONCILED": {
+      "resolution": [
+        "CONFIRMED_DUPLICATE",
+        "DISTINCT_DOSES"
+      ]
+    },
+    "DEFERRAL_RECORDED": {
+      "kind": [
+        "MEDICAL_CONTRAINDICATION",
+        "TEMPORARY_DEFERRAL"
+      ]
+    },
+    "CONSENT_UPDATED": {
+      "scope": [
+        "EXTRA_DATA_USE"
+      ]
+    },
+    "PROOF_ISSUED": {
+      "viewer_role": [
+        "GUARDIAN",
+        "SCHOOL",
+        "CDC"
+      ]
+    }
+  },
+  "payload_datetime_fields_by_event": {
+    "POLICY_PUBLISHED": [
+      "effective_at"
+    ],
+    "DOSE_RECORDED": [
+      "administered_at"
+    ],
+    "DOSE_REPORTS_RECONCILED": [
+      "decided_at"
+    ],
+    "RECORD_MATCHED": [
+      "matched_at"
+    ],
+    "BATCH_SUSPENDED": [
+      "effective_at"
+    ],
+    "DEFERRAL_RECORDED": [
+      "effective_at"
+    ],
+    "DEFERRAL_CLEARED": [
+      "cleared_at"
+    ],
+    "CONSENT_UPDATED": [
+      "effective_at"
+    ],
+    "PLAN_PROPOSED": [
+      "scheduled_at"
+    ],
+    "PLAN_CANCELLED": [
+      "cancelled_at"
+    ]
+  },
+  "payload_date_fields_by_event": {
+    "CHILD_REGISTERED": [
+      "birth_date"
+    ],
+    "DEFERRAL_RECORDED": [
+      "valid_until"
+    ],
+    "POLICY_PUBLISHED": [
+      "rules.season_start",
+      "rules.season_end",
+      "rules.age_as_of",
+      "rules.recommended_complete_by"
+    ]
+  },
+  "payload_integer_fields_by_event": {
+    "PROOF_ISSUED": [
+      "record_version"
+    ],
+    "POLICY_PUBLISHED": [
+      "rules.onset_days_after_final_dose"
+    ]
+  },
+  "payload_boolean_fields_by_event": {
+    "CONSENT_UPDATED": [
+      "granted"
     ]
   },
   "additionalProperties": false
